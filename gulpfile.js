@@ -11,26 +11,34 @@ var paths = {
     'bower_components/handlebars/handlebars.min.js',
     '.bowercomponents/ember/ember.min.js'],
   scripts: ['assets/js/*.js'],
-  styles: ['assets/stylesheets/*.styl']
+  styles: ['assets/stylesheets/*.styl'],
+  jsDest: 'public/js/',
+  cssDest: 'public/stylesheets/'
+};
+
+var fileNames = {
+  application: 'app.js',
+  vendors: 'vendors.min.js',
+  scripts: 'main.js'
 };
 
 gulp.task('vendors', function() {
   return gulp.src(paths.vendors)
-    .pipe(concat('vendors.min.js'))
+    .pipe(concat(fileNames.vendors))
     .pipe(uglify())
-    .pipe(gulp.dest('public/js/'));
+    .pipe(gulp.dest(paths.jsDest));
 });
 
 gulp.task('scripts', function() {
   gulp.src(paths.scripts)
     .pipe(watch(function(files) {
-      return files.pipe(concat('main.js'))
-        .pipe(gulp.dest('public/js'));
+      return files.pipe(concat(fileNames.scripts))
+        .pipe(gulp.dest(paths.jsDest));
     }));
 });
 
 gulp.task('webserver', function () {
-  nodemon({ script: 'app.js'})
+  nodemon({ script: fileNames.application})
   .on('restart', function() {
     console.log('Server Has Restarted');
   });
@@ -40,7 +48,7 @@ gulp.task('stylus', function() {
   gulp.src(paths.styles)
     .pipe(watch(function(files) {
       return files.pipe(stylus({use: nib(), compress: true}))
-        .pipe(gulp.dest('public/stylesheets'));
+        .pipe(gulp.dest(paths.cssDest));
     }));
 });
 
